@@ -1,0 +1,9 @@
+/vendor
+/composer.lock
+/.idea
+**/.idea
+/.phpunit.result.cache
+/.phpunit.cache
+/.phpstan.cache
+/.sheath-cache
+/build

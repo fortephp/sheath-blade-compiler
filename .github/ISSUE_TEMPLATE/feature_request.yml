@@ -1,0 +1,38 @@
+name: Request an improvement
+description: Suggest a new capability or an improvement to compiler diagnostics.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea. A concrete Blade example helps us understand the
+        behavior you would like to see.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem should this solve?
+      description: Describe the limitation or workflow that prompted the request.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to happen?
+      description: Describe the diagnostic or behavior you have in mind.
+    validations:
+      required: true
+
+  - type: textarea
+    id: blade
+    attributes:
+      label: Blade example
+      description: Show the relevant template and the result you would expect, if applicable.
+      render: blade
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Share any workarounds or other approaches you have tried.

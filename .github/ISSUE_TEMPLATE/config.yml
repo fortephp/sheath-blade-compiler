@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://fortephp.com/docs/sheath/v1/blade-compiler
+    about: Read the installation, configuration, and troubleshooting guide.
+  - name: Security issue
+    url: https://github.com/fortephp/sheath-blade-compiler/security/advisories/new
+    about: Privately report a security vulnerability.

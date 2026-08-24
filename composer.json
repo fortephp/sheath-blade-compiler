@@ -1,0 +1,58 @@
+{
+    "name": "fortephp/sheath-blade-compiler",
+    "description": "Laravel Blade compiler diagnostics for the Sheath template linter.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "blade linter"
+    ],
+    "authors": [
+        {
+            "name": "John Koster",
+            "email": "john@stillat.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-tokenizer": "*",
+        "fortephp/sheath": "^1.0",
+        "laravel/framework": "^12.0 || ^13.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.22",
+        "orchestra/testbench": "^10.0 || ^11.0",
+        "pestphp/pest": "^3.0",
+        "phpstan/phpstan": "^2.1",
+        "rector/rector": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Forte\\Sheath\\BladeCompiler\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Forte\\Sheath\\BladeCompiler\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Forte\\Sheath\\BladeCompiler\\ServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        },
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "pest",
+        "analyse": "phpstan analyse --memory-limit=1G",
+        "format": "pint",
+        "rector": "rector process --dry-run"
+    }
+}

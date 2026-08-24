@@ -1,0 +1,72 @@
+name: Report a bug
+description: Tell us about an incorrect diagnostic, missed error, or compiler integration problem.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the Blade Compiler plugin. A small Blade
+        example helps us investigate the problem quickly.
+
+  - type: textarea
+    id: blade
+    attributes:
+      label: Blade example
+      description: Share the smallest template that still shows the problem.
+      render: blade
+      placeholder: |
+        @if($ready +)
+            Ready
+        @endif
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What happened?
+      description: Tell us what you expected and what Sheath reported instead.
+      placeholder: |
+        Expected: the error to highlight line 1.
+        Actual: the error highlighted an unrelated directive.
+    validations:
+      required: true
+
+  - type: textarea
+    id: compiler-setup
+    attributes:
+      label: Relevant Blade setup
+      description: Include custom directives, components, precompilers, or compiler hooks involved in the problem.
+      render: php
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Relevant Sheath configuration
+      description: Include the preset and `blade-compiler-valid-output` options. Leave blank if you use the defaults.
+      render: php
+
+  - type: dropdown
+    id: validation
+    attributes:
+      label: PHP validation mode
+      options:
+        - process (default)
+        - parser
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: versions
+    attributes:
+      label: Versions
+      description: Share your PHP, Laravel, Sheath, and Blade Compiler plugin versions.
+      render: text
+      placeholder: |
+        PHP 8.4
+        Laravel 12
+        fortephp/sheath 1.0
+        fortephp/sheath-blade-compiler 1.0
+    validations:
+      required: true

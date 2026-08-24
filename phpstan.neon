@@ -1,0 +1,10 @@
+parameters:
+    level: 10
+    paths:
+        - src
+        - tests
+    tmpDir: .phpstan.cache
+    excludePaths:
+        analyse:
+            - vendor
+    treatPhpDocTypesAsCertain: false
