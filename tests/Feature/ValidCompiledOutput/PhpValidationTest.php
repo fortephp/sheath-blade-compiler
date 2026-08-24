@@ -107,6 +107,7 @@ it('matches native lint multibyte parsing to the current PHP runtime', function 
         echo json_encode([
             'loadedIni' => php_ini_loaded_file(),
             'mbstring' => extension_loaded('mbstring'),
+            'tokenizer' => extension_loaded('tokenizer'),
             'zend.multibyte' => ini_get('zend.multibyte'),
             'diagnostic' => $diagnostic?->message,
         ], JSON_THROW_ON_ERROR);
@@ -117,21 +118,28 @@ it('matches native lint multibyte parsing to the current PHP runtime', function 
         2 => ['pipe', 'w'],
     ];
     $pipes = [];
+    $extensionDirectory = (string) ini_get('extension_dir');
+    // Some platforms package tokenizer as a shared extension, which -n disables.
+    $tokenizerLibrary = rtrim($extensionDirectory, '/\\')
+        .DIRECTORY_SEPARATOR.(PHP_OS_FAMILY === 'Windows' ? 'php_' : '')
+        .'tokenizer.'.PHP_SHLIB_SUFFIX;
+    $command = [
+        PHP_BINARY,
+        '-n',
+        '-d',
+        'extension_dir='.$extensionDirectory,
+        '-d',
+        'extension=mbstring',
+        ...(is_file($tokenizerLibrary) ? ['-d', 'extension=tokenizer'] : []),
+        '-d',
+        'zend.multibyte=1',
+        '-r',
+        $script,
+        dirname(__DIR__, 3).'/vendor/autoload.php',
+        base64_encode($compiled),
+    ];
     $process = proc_open(
-        [
-            PHP_BINARY,
-            '-n',
-            '-d',
-            'extension_dir='.ini_get('extension_dir'),
-            '-d',
-            'extension=mbstring',
-            '-d',
-            'zend.multibyte=1',
-            '-r',
-            $script,
-            dirname(__DIR__, 3).'/vendor/autoload.php',
-            base64_encode($compiled),
-        ],
+        $command,
         $descriptors,
         $pipes,
         options: ['bypass_shell' => true],
@@ -147,11 +155,13 @@ it('matches native lint multibyte parsing to the current PHP runtime', function 
     fclose($pipes[1]);
     fclose($pipes[2]);
     $exitCode = proc_close($process);
+    $processOutput = trim(implode(PHP_EOL, array_filter([$stderr, $stdout], is_string(...))));
 
-    expect($exitCode)->toBe(0, is_string($stderr) ? $stderr : '')
+    expect($exitCode)->toBe(0, $processOutput)
         ->and(json_decode(is_string($stdout) ? $stdout : '', true, flags: JSON_THROW_ON_ERROR))->toBe([
             'loadedIni' => false,
             'mbstring' => true,
+            'tokenizer' => true,
             'zend.multibyte' => '1',
             'diagnostic' => null,
         ]);
