@@ -127,6 +127,8 @@ it('matches native lint multibyte parsing to the current PHP runtime', function 
         PHP_BINARY,
         '-n',
         '-d',
+        'display_errors=stderr',
+        '-d',
         'extension_dir='.$extensionDirectory,
         '-d',
         'extension=mbstring',
@@ -157,14 +159,21 @@ it('matches native lint multibyte parsing to the current PHP runtime', function 
     $exitCode = proc_close($process);
     $processOutput = trim(implode(PHP_EOL, array_filter([$stderr, $stdout], is_string(...))));
 
-    expect($exitCode)->toBe(0, $processOutput)
-        ->and(json_decode(is_string($stdout) ? $stdout : '', true, flags: JSON_THROW_ON_ERROR))->toBe([
-            'loadedIni' => false,
-            'mbstring' => true,
-            'tokenizer' => true,
-            'zend.multibyte' => '1',
-            'diagnostic' => null,
-        ]);
+    expect($exitCode)->toBe(0, $processOutput);
+
+    try {
+        $result = json_decode(is_string($stdout) ? $stdout : '', true, flags: JSON_THROW_ON_ERROR);
+    } catch (JsonException $exception) {
+        throw new RuntimeException("The multibyte validation process returned invalid JSON: {$processOutput}", previous: $exception);
+    }
+
+    expect($result)->toBe([
+        'loadedIni' => false,
+        'mbstring' => true,
+        'tokenizer' => true,
+        'zend.multibyte' => '1',
+        'diagnostic' => null,
+    ]);
 });
 
 it('streams compiled templates larger than a pipe buffer to native PHP', function (): void {
