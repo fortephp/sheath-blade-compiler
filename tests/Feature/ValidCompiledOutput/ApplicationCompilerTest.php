@@ -247,15 +247,26 @@ it('rebinds an invokable compiler callback to its isolated clone', function (): 
         ->and($compiler->getPath())->toBe('original-view.blade.php');
 });
 
-it('uses a fresh cache context by default', function (): void {
+it('uses a stable cache context by default', function (): void {
     $compiler = app(BladeCompiler::class);
 
     $first = CompilerFingerprint::make($compiler);
     $second = CompilerFingerprint::make($compiler);
 
-    expect($second)->not->toBe($first)
+    expect($second)->toBe($first)
         ->and($first['compiler'] ?? null)->toBe($compiler::class)
-        ->and($first['parser'] ?? null)->toBe(PhpValidator::parserConfiguration());
+        ->and($first['parser'] ?? null)->toBe(PhpValidator::parserConfiguration())
+        ->and($first['application'] ?? null)->toBe(['default' => 'stable']);
+});
+
+it('can use a fresh cache context for every invocation', function (): void {
+    $compiler = app(BladeCompiler::class);
+
+    $first = CompilerFingerprint::make($compiler, cacheAcrossRuns: false);
+    $second = CompilerFingerprint::make($compiler, cacheAcrossRuns: false);
+
+    expect($second)->not->toBe($first)
+        ->and($first['application'] ?? [])->toHaveKey('invocation');
 });
 
 it('uses an opaque stable application cache identity when provided', function (): void {

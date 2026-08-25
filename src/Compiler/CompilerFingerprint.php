@@ -16,16 +16,21 @@ final class CompilerFingerprint
      *
      * @throws RandomException
      */
-    public static function make(BladeCompiler $compiler, string $cacheIdentity = ''): array
-    {
+    public static function make(
+        BladeCompiler $compiler,
+        string $cacheIdentity = '',
+        bool $cacheAcrossRuns = true,
+    ): array {
         return [
             'php' => PHP_VERSION_ID,
             'binary' => PHP_BINARY,
             'parser' => PhpValidator::parserConfiguration(),
             'compiler' => $compiler::class,
-            'application' => $cacheIdentity === ''
+            'application' => ! $cacheAcrossRuns
                 ? ['invocation' => bin2hex(random_bytes(16))]
-                : ['provided' => hash('xxh128', $cacheIdentity)],
+                : ($cacheIdentity === ''
+                    ? ['default' => 'stable']
+                    : ['provided' => hash('xxh128', $cacheIdentity)]),
         ];
     }
 }
