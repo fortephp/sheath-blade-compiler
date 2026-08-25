@@ -63,6 +63,17 @@ it('requires cacheIdentity to be a string', function (mixed $identity): void {
     'array' => [['deployment']],
 ]);
 
+it('requires cacheAcrossRuns to be a boolean', function (mixed $cacheAcrossRuns): void {
+    expect(fn () => lintCompiledBlade('', ['cacheAcrossRuns' => $cacheAcrossRuns]))
+        ->toThrow(
+            ConfigurationException::class,
+            "Invalid option 'cacheAcrossRuns' for rule 'blade-compiler-valid-output'. Expected a bool.",
+        );
+})->with([
+    'integer' => [1],
+    'string' => ['true'],
+]);
+
 it('fails closed when the PHP validation process cannot start', function (): void {
     $validator = new PhpValidator(__DIR__.'/missing-php-binary');
 

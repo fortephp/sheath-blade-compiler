@@ -48,6 +48,30 @@ By default, the plugin starts a separate PHP process to check each compiled view
 ],
 ```
 
+## Caching
+
+The rule reuses results across `--cache` runs by default. Template changes invalidate their own cached results automatically. If you change application-level Blade compiler behavior, such as custom directives, precompilers, or component registrations, delete `.sheath-cache` before the next run.
+
+You can also supply a deployment or build revision with `cacheIdentity`. Changing it invalidates cached compiler results without exposing the original value in the compiler fingerprint:
+
+```php
+'rules' => [
+    'blade-compiler-valid-output' => ['error', [
+        'cacheIdentity' => env('APP_BUILD_ID', ''),
+    ]],
+],
+```
+
+Set `cacheAcrossRuns` to `false` if the application changes compiler behavior at runtime and cached results must never be reused between command invocations:
+
+```php
+'rules' => [
+    'blade-compiler-valid-output' => ['error', [
+        'cacheAcrossRuns' => false,
+    ]],
+],
+```
+
 ## Requirements
 
 - PHP 8.2 or newer

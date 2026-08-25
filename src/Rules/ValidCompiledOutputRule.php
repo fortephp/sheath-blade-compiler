@@ -30,6 +30,7 @@ final class ValidCompiledOutputRule extends AbstractRule implements ProvidesCach
     protected array $options = [
         'phpValidation' => PhpValidator::PROCESS,
         'cacheIdentity' => '',
+        'cacheAcrossRuns' => true,
     ];
 
     protected array $optionRules = [
@@ -79,9 +80,19 @@ final class ValidCompiledOutputRule extends AbstractRule implements ProvidesCach
             );
         }
 
+        $cacheAcrossRuns = $options['cacheAcrossRuns'] ?? true;
+        if (! is_bool($cacheAcrossRuns)) {
+            throw ConfigurationException::invalidRuleOption(
+                $this->getId(),
+                'cacheAcrossRuns',
+                'a bool',
+            );
+        }
+
         return CompilerFingerprint::make(
             $this->compiler,
             $cacheIdentity,
+            $cacheAcrossRuns,
         );
     }
 
